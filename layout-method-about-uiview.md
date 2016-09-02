@@ -9,3 +9,5 @@
 * 滚动scrollView
 * screen发生旋转
 
+特别注意：如果想在外部设置subviews的位置，就不要重写该方法
+2,
