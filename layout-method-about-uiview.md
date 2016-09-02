@@ -1,0 +1,2 @@
+layoutSubviews setNeedLayout layoutIfNeeded drawRact 
+
