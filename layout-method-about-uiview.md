@@ -10,4 +10,7 @@
 * screen发生旋转
 
 特别注意：如果想在外部设置subviews的位置，就不要重写该方法
-2,
+2,setNeedLayout
+
+该方法标记为需要重新布局，不会马上调用layoutSubviews，但一定会调用
+
