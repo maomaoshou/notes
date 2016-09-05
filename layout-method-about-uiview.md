@@ -28,11 +28,9 @@
     -setNeedsDisplayInRect:\(CFRect\)invalidRect:标记为需要局部重绘。
 
 
-  以上1，2推荐，3，4不推荐
+
+      以上1，2推荐，3，4不推荐
 8. 得到的
-
-
-      
 
 * 1. 
   2. 
