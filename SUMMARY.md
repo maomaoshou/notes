@@ -1,8 +1,7 @@
 # Summary
 
 * [Introduction](README.md)
-* [First Chapter](chapter1.md)
-* [Layout methods about UIView](layout-method-about-uiview.md)
-* [ScrollView](scrollview.md)
-* [Runtime](runtime.md)
+* [1.Layout methods about UIView](layout-method-about-uiview.md)
+* [2.ScrollView](scrollview.md)
+* [3.Runtime](runtime.md)
 

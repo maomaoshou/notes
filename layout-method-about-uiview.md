@@ -1,4 +1,4 @@
-# layoutSubviews,setNeedsLayout,layoutIfNeeded,drawRact
+# 基于UIView的Layer方法
 
 1. layoutSubviews:该方法默认没做任何事，需要子类实现。在ios5.1后，该方法的缺省实现是使用你设置在此view上面的constraints\(Autolayout\)去决定subviews的position和size。只有在autoresizing和constraint-based behaviors of subviews不能提供我们想要的布局结果的时候，我们才应该重写此方法。可以在此方法中直接设置subviews的frame。 我们不应该直接调用此方法，而应当用setNeedsLayout和layoutIfNeeded这两个方法。以下情况会触发该方法:
 
@@ -13,7 +13,13 @@
 
 4. Auto layout在view显示之前，多引入了两个步骤：updating constraints 和laying out views。每一个步骤都依赖于上一个。display依赖layout，而layout依赖updating constraints。 updating constraints-&gt;layout-&gt;display
 
-5. UIView的setNeedsDisplay和setNeedsLayout方法。首先两个方法都是异步执行的。setNeedsDisplay会调用自动调用drawRect方法，这样可以拿到UIGraphicsGetCurrentContext，就可以画画了。而setNeedsLayout会默认调用layoutSubViews，就可以处理子视图中的一些数据。
+5. UIView的setNeedsDisplay和setNeedsLayout方法。首先两个方法都是异步执行的。layoutSubviews方便数据计算，drawRect方便视图重绘。setNeedsDisplay会调用自动调用drawRect方法，这样可以拿到UIGraphicsGetCurrentContext，就可以画画了。而setNeedsLayout会默认调用layoutSubViews，就可以处理子视图中的一些数据。
 
-综上两个方法都是异步执行的，layoutSubviews方便数据计算，drawRect方便视图重绘。
+6. sizeToFit和sizeThatFits:
+7. drawRect会在以下情况被调用：
+  *  如果在UIView初始化时没有设置rect大小，将直接导致drawRect不被自动调用。drawRect 掉用是在Controller-&gt;loadView, Controller-&gt;viewDidLoad 两个方法之后的.所以不用担心在控制器中,这些View的drawRect就开始画了.这样可以在控制器中设置一些值给View\(如果这些View draw的时候需要用到某些变量值\).
+  * 
+
+
+
 
