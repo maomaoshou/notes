@@ -28,12 +28,8 @@
     -setNeedsDisplayInRect:\(CFRect\)invalidRect:标记为需要局部重绘。以上1，2 推荐，3，4不推荐。
 
 
-8. AutoLayout的布局过程：updateConstraints- &gt;layout - &gt;display。
+8.  AutoLayout的布局过程：updateConstraints- &gt;layout - &gt;display 。
 
-9. 
-
-以上1，2推荐，3，4 不推荐。
-8. 关于AutoLayout的布局过程：updateConstraints- &gt;layout- &gt;display。
-
+9. AutoLayout的布局过程：updateConstraints- &gt;layout - &gt;display
 
 
