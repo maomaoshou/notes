@@ -25,11 +25,8 @@
   * 直接调用setNeedsDisplay，或者setNeedsDisplayInRect:触发drawRect:，但是有个前提条件是rect不能为0。
     -setNeedsDisplay:标记为需要重绘，异步调用drawRect
 
-    ```
-    -setNeedsDisplayInRect:\(CGRect\)invalidRect :标记为需要局部重绘。
-    ```
 
-
-
-      以上1，2推荐，3，4不推荐。
+         -setNeedsDisplayInRect:\\(CGRect\\)invalidRect :标记为需要局部重绘。推荐1，2.不推荐3，4.  
+8.  
+9.     
 
