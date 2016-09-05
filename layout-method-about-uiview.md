@@ -1,4 +1,4 @@
-# 基于UIView的Layer方法
+# UIView绘制和AutoLayout布局过程
 
 1. layoutSubviews:该方法默认没做任何事，需要子类实现。在ios5.1后，该方法的缺省实现是使用你设置在此view上面的constraints\(Autolayout\)去决定subviews的position和size。只有在autoresizing和constraint-based behaviors of subviews不能提供我们想要的布局结果的时候，我们才应该重写此方法。可以在此方法中直接设置subviews的frame。 我们不应该直接调用此方法，而应当用setNeedsLayout和layoutIfNeeded这两个方法。以下情况会触发该方法:
 
@@ -28,8 +28,9 @@
     -setNeedsDisplayInRect:\(CFRect\)invalidRect:标记为需要局部重绘。以上1，2 推荐，3，4不推荐。
 
 
-8.  AutoLayout的布局过程：updateConstraints- &gt;layout - &gt;display 。
 
-9. AutoLayout的布局过程：updateConstraints- &gt;layout - &gt;display
+1. AutoLayout的布局过程：updateConstraints- &gt;layout - &gt;display 。
+
+2. AutoLayout的布局过程：updateConstraints- &gt;layout - &gt;display
 
 
