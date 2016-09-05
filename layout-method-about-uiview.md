@@ -25,10 +25,15 @@
   * 直接调用setNeedsDisplay，或者setNeedsDisplayInRect:触发drawRect:，但是有个前提条件是rect不能为0。
     -setNeedsDisplay:标记为需要重绘，异步调用drawRect
 
-    -setNeedsDisplayInRect:\(CFRect\)invalidRect:标记为需要局部重绘。
+    -setNeedsDisplayInRect:\(CFRect\)invalidRect:标记为需要局部重绘。以上1，2 推荐，3，4不推荐。
 
 
+8. AutoLayout的布局过程：updateConstraints- &gt;layout - &gt;display。
+
+9. 
 
 以上1，2推荐，3，4 不推荐。
 8. 关于AutoLayout的布局过程：updateConstraints- &gt;layout- &gt;display。
+
+
 
