@@ -30,9 +30,5 @@
 
 
 以上1，2推荐，3，4 不推荐。
-8. 法人股风
-
-1. 1. 
-  2. 
-
+8. 关于AutoLayout的布局过程：updateConstraints- &gt;layout- &gt;display。
 
