@@ -22,5 +22,15 @@
   * 如果在UIView初始化时没有设置rect大小，将直接导致drawRect不被自动调用。drawRect 掉用是在Controller-&gt;loadView, Controller-&gt;viewDidLoad 两个方法之后的.所以不用担心在控制器中,这些View的drawRect就开始画了.这样可以在控制器中设置一些值给View\(如果这些View draw的时候需要用到某些变量值\).  
   * 该方法在调用sizeToFit后被调用，所以可以先调用sizeToFit计算出size。然后系统自动调用drawRect:方法。sizeToFit会自动调用sizeThatFits方法。sizeToFit方法不应该在子类中重写，而应该重写sizeThatFits方法。sizeThatFits传入的参数是 receiver当前的size,返回一个合适的size。sizeToFit可以被手动调用。sizeToFit和sizeThatFits都没有递归，也不对subviews负责，只对自己负责。
   * 通过设置contentMode属性值为UIViewContentModeRedraw。那么将在每次设置或更改frame的时候自动调用drawRect:。
+  *  直接调用setNeedsDisplay，或者setNeedsDisplayInRect:触发drawRect:，但是有个前提条件是rect不能为0。
 
+
+
+    -setNeedsDisplay方法：标记为需要重绘，异步调用drawRect
+
+
+
+    -setNeedsDisplayInRect:\(CGRect\)invalidRect方法：标记为需要局部重绘
+
+  以上1，2推荐，3，4不推荐。
 
