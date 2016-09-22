@@ -1,4 +1,5 @@
-# My Awesome Book
+1.  关于加载 cell时的复用问题，如果cell中的控件因model而展示不同，则需要考虑到复用，设置cell展示时进行控件的重置
+2. 关于方法传空参数，必须传对应参数类型的空置，不能传nil
 
- all kinds of notes anout ios
+
 
