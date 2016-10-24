@@ -6,6 +6,7 @@
 
 4. 如果设置button的title等属性时传的state参数为UIControlStateDisabled,那么button对应的edable属性要同步设置为NO。否则对应的state参数为UIControlStateNormal。
 
-5. 关于button的几种状态normal,highlighted,selected.disabled.
+5. 关于button的几种状态normal,highlighted,selected.disabled.从这里了解：http:\/\/www.jianshu.com\/p\/e87096da5512
 
+6. 
 
