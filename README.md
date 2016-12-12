@@ -8,5 +8,8 @@
 
 5. 关于button的几种状态normal,highlighted,selected.disabled.从这里了解：http:\/\/www.jianshu.com\/p\/e87096da5512
 
-6. 
+6. 模拟器卡可以在命令行执行：sudo sysctl -w kern.timer.coalescing\_enabled=0
+
+
+
 
