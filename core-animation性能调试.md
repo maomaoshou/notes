@@ -11,7 +11,7 @@ Color Blended Layers\(图层混合\):如果界面中有多个UI元素发生了�
 
 1. 设置opaque属性为true
 
-2. 给View设置一个不透明的颜色，没有特殊要求一般设置为白色即可
+2. 给View设置一个不透明的颜色，没有特殊要求一般设置为白色即可\(如果设置label的background需要同时设置label.layer.maskToBounds = YES;UIImageView不仅需要自身这个容器是不透明的，并且imageView包含的内容图片也必须是不透明的\)
 
 
 
