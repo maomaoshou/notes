@@ -45,7 +45,7 @@
 为了尽可能避免触发离屏渲染，可以换其他手段来实现必要的功能：
 
 （1）阴影绘制shadow:使用ShadowPath来替代shadowOffset等属性的设置  
-imageViewLayer.shadowPath = CGPathCreateWithRect\(imageRect, NULL\);
+             imageViewLayer.shadowPath = CGPathCreateWithRect\(imageRect, NULL\);
 
 （2）利用GraphicsContex生成一张带圆角的图片或者view。
 
