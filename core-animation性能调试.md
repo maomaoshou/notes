@@ -14,7 +14,7 @@
 2. 给View设置一个不透明的颜色，没有特殊要求一般设置为白色即可\(如果设置label的background需要同时设置label.layer.maskToBounds = YES;UIImageView不仅需要自身这个容器是不透明的，并且imageView包含的内容图片也必须是不透明的\)
 
 
-**Color Hits Green and Misses Red（光栅化）**：光栅化是将一个layer预先渲染成位图\(bitmap\)，再加入到缓存中。正确使用光栅化可以得到一定程度的性能提升。
+**Color Hits Green and Misses Red（光栅化）**：光栅化是将一个layer预先渲染成位图\(bitmap\)，再加入到缓存中。shouldRasterize = YES开启光栅化。正确使用光栅化可以得到一定程度的性能提升。
 
 1. 适用情况：一般在图像内容不变的情况下才使用光栅化，例如设置阴影耗费资源比较多的静态内容，如果使用光栅化对性能的提升有一定帮助。
 
@@ -34,10 +34,8 @@
 （5）layer.mask  
 （6）layer.masksToBounds && layer.cornerRadius
 
-  
-这里有需要注意的是第三条layer.shouldRasterize ，其实就是我们本文讲的第三个选项光栅化，光栅化会触发离屏渲染，因此光栅化慎用。
+需要注意的是第三条layer.shouldRasterize ，其实就是光栅化，光栅化会触发离屏渲染，因此光栅化慎用。
 
-  
 第六条设置圆角会触发离屏渲染，如果在某个页面大量使用了圆角，会非常消耗性能造成FPS急剧下降，设置圆角触发离屏渲染要同时满足下面两个条件:
 
 > layer.masksToBounds = YES;
