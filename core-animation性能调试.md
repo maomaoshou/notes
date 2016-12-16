@@ -25,5 +25,24 @@
 
 **Color Misaligned Images\(图片大小\)**：如果image size和imageView size不匹配，image会出现黄色。要尽可能的减少黄色的出现
 
-**Color Offscreen-Rendered Yellow（离屏渲染）：**指的是GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作。还有另外一种屏幕渲染方式-当前屏幕渲染On-Screen Rendering ，指的是GPU的渲染操作是在当前用于显示的屏幕缓冲区中进行。 离屏渲染会先在屏幕外创建新缓冲区，离屏渲染结束后，再从离屏切到当前屏幕， 把离屏的渲染结果显示到当前屏幕上，这个上下文切换的过程是非常消耗性能的，实际开发中尽可能避免离屏渲染。
+**Color Offscreen-Rendered Yellow（离屏渲染）：**指的是GPU在当前屏幕缓冲区以外新开辟一个缓冲区进行渲染操作。还有另外一种屏幕渲染方式-当前屏幕渲染On-Screen Rendering ，指的是GPU的渲染操作是在当前用于显示的屏幕缓冲区中进行。 离屏渲染会先在屏幕外创建新缓冲区，离屏渲染结束后，再从离屏切到当前屏幕， 把离屏的渲染结果显示到当前屏幕上，这个上下文切换的过程是非常消耗性能的，实际开发中尽可能避免离屏渲染。触发离屏渲染的行为：
+
+（1）drawRect:方法  
+（2）layer.shadow  
+（3）layer.allowsGroupOpacity or layer.allowsEdgeAntialiasing  
+（4）layer.shouldRasterize  
+（5）layer.mask  
+（6）layer.masksToBounds && layer.cornerRadius
+
+  
+这里有需要注意的是第三条layer.shouldRasterize ，其实就是我们本文讲的第三个选项光栅化，光栅化会触发离屏渲染，因此光栅化慎用。
+
+  
+第六条设置圆角会触发离屏渲染，如果在某个页面大量使用了圆角，会非常消耗性能造成FPS急剧下降，设置圆角触发离屏渲染要同时满足下面两个条件:
+
+> layer.masksToBounds = YES;
+>
+> layer.cornerRadius = 5;
+
+
 
