@@ -12,4 +12,5 @@
 * [cocoapods](cocoapods.md)
 * [Core Animation性能调试](core-animation性能调试.md)
 * [UIKit](uikit.md)
+* [初始化方法](初始化方法.md)
 
