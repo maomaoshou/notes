@@ -19,10 +19,11 @@ if \(button.width &gt;＝ imageView.width + label.width\){图像和文字都居�
 
 ### UIView
 
-  
 UIView的frame与bounds和center的关系：
 
-UIView.frame.origin = center - \(bounds.size / 2.0\)UIView.center = frame.origin + \(bounds.size / 2.0\)UIView.frame.size = bounds.size
+UIView.frame.origin = center - \(bounds.size / 2.0\)
 
+UIView.center = frame.origin + \(bounds.size / 2.0\)
 
+UIView.frame.size = bounds.size
 
