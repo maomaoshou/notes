@@ -17,3 +17,12 @@ if \(button.width &lt; imageView.width + label.width\){图像正常显示，文�
 
 if \(button.width &gt;＝ imageView.width + label.width\){图像和文字都居中显示，imageView在左，label在右，中间没有空隙}
 
+### UIView
+
+  
+UIView的frame与bounds和center的关系：
+
+UIView.frame.origin = center - \(bounds.size / 2.0\)UIView.center = frame.origin + \(bounds.size / 2.0\)UIView.frame.size = bounds.size
+
+
+
