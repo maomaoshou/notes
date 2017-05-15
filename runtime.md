@@ -2,7 +2,7 @@
 2. IMP是一个指向函数实现的指针。
 3. super仅仅作为一个编译标志符，告诉编译器去调用父类的方法。如果要获取到父类，使用\[self superclass\]
 4. \[A isKindOfClass:B\]方法中，执行详情为取A的meta class和B比较，若不同，则取A的meta class的super class和B比较，依次循环
-5. \[A isMemberOfClass:B\]是拿 A的meta class和B比较
+5. \[A isMemberOfClass:B\]是拿 A的meta class和B比较。
 
 
 

@@ -8,7 +8,7 @@
 * [程序调试](程序调试.md)
 * [Xcode8的坑](xcode8的坑.md)
 * [快捷键](快捷键.md)
-* [综合知识点](综合知识点.md)
+* [综合](综合知识点.md)
 * [cocoapods](cocoapods.md)
 * [Core Animation性能调试](core-animation性能调试.md)
 * [UIKit](uikit.md)
