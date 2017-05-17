@@ -7,5 +7,5 @@
 7. Method Swizzling使用注意点：Method Swizzling应该在 +load方法中执行，Method Swizzling应该dispath once中执行，Method Swizzling执行时不应该调用\[super load\]方法
 8. Method Swizzling模版：
 
-
+![](/assets/l.png)
 
