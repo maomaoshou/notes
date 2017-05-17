@@ -4,7 +4,8 @@
 4. \[A isKindOfClass:B\]方法中，执行详情为取A的meta class和B比较，若不同，则取A的meta class的super class和B比较，依次循环
 5. \[A isMemberOfClass:B\]是拿 A的meta class和B比较。
 6. category实现：将category中的实例方法，协议以及属性添加到类上，将category的类方法，协议添加到类的meta classs上。调用一个category方法时，首先在类的方法列表中寻找方法的实现，若没有则在类的meta  class方法列表中寻找，再没有便在meta class的super class方法列表中寻找
-7. Method Swizzling使用注意点：Method Swizzling应该在 +load方法中执行，Method Swizzling应该dispath once中执行
+7. Method Swizzling使用注意点：Method Swizzling应该在 +load方法中执行，Method Swizzling应该dispath once中执行，Method Swizzling执行时不应该调用\[super load\]方法
+8. Method Swizzling模版：
 
 
 
