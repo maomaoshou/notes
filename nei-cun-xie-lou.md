@@ -1,12 +1,6 @@
-1. 
+1. ZBJBUserDiscountTicketExpiredTableViewCell.m
 
-   ZBJBUserDiscountTicketExpiredTableViewCell.m    
-  
+CGMutablePathRef path = CGPathCreateMutable\(\);CGPathMoveToPoint\\(path,NULL,22,70\\);
 
-
-   CGMutablePathRef path = CGPathCreateMutable\(\);
-
-    CGPathMoveToPoint\(path,NULL,22,70\);
-
-
+ZBJBWebView,父类初始化方法
 
