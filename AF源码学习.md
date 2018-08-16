@@ -1,0 +1,9 @@
+# AF源码学习
+
+## 基础知识
+
+* 相关原生类
+
+    1. NSURLConnection：指构成Foundation框架中URL加载体系的相关组件：NSURLRequest,NSURLResponse,NSURLProtocol,NSURLCache,NSHTTPCookieStorage,NSURLCredentialStorage以及NSURLConnection。
+
+    1. NSURLSession:是2013年苹果对NSURLConnection进行重构后产生的替代品，除了包括同NSURLConnection中相同的相关网络类外，NSURLSession将NSURLConnection替换为NSURLSession和NSURLSessionConfiguration，以及三个NSURLSessionTask子类：NSURLSessionDataTask,NSURLSessionUploadTask和NSURLSessionDownloadTask。
