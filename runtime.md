@@ -1,5 +1,24 @@
 # Runtime
 
+## **源码**
+
+    struct objc_class {
+    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;
+
+    #if !__OBJC2__
+    Class _Nullable super_class    ///父类                          OBJC2_UNAVAILABLE;
+    const char * _Nonnull name    ///类名                           OBJC2_UNAVAILABLE;
+    long version             ///版本                             OBJC2_UNAVAILABLE;
+    long info                        ///信息                        OBJC2_UNAVAILABLE;
+    long instance_size                ///实例大小                       OBJC2_UNAVAILABLE;
+    struct objc_ivar_list * _Nullable ivars    ///成员变量列表              OBJC2_UNAVAILABLE;
+    struct objc_method_list * _Nullable * _Nullable methodLists                ///方法列表    OBJC2_UNAVAILABLE;
+    struct objc_cache * _Nonnull cache   ///缓存                    OBJC2_UNAVAILABLE;
+    struct objc_protocol_list * _Nullable protocols    ///protocol列表      OBJC2_UNAVAILABLE;
+    #endif
+
+    } OBJC2_UNAVAILABLE;
+
 > 所有OC类和对象在runtime层都是用struct表示的
 
 ## **基本概念**
