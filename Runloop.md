@@ -1,0 +1,1 @@
+* 获取主线程：pthread_main_thread_up()或者[NSThread mainThread]

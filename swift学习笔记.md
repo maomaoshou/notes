@@ -84,13 +84,18 @@
 
     `guard`语句，类似if语句，guard语句总是有一个else分局，当条件不为真时执行else语句
 
-## functions
+## functions（函数）
 
 * 没有返回值可以省略`->`及其后面的void，形如
 
         func greet(person: String) {
             //do something
         }
+
+* 忽略函数的返回值可以使用下面形式
+    ```
+    let _ = self.someFunctionWithAReturnValue()
+    ```
 
 * 返回多个值，形如
 
@@ -158,7 +163,7 @@
 
 * In-Out参数
 
-   方法的参数默认为常量不能修改， In-Out参数为指针参数，可以在方法内修改参数值，在外部同样生效
+   方法的参数默认为常量不能修改， In-Out参数为指针参数，可以在方法内修改参数值，在外部同样生效,调用时需要在In-Out参数名前加上`&`
 
 **可变参数不能被标记为In-Out参数，In-Out参数不能有默认值**
 
@@ -186,7 +191,7 @@
 
 * Nested Functions（内嵌函数）
 
-    声明在方法内部的方法，称为nested functions
+    声明在方法内部的方法，称为nested functions, 内嵌函数只能被外围函数(enclosing function)调用，外围函数可以返回它的内嵌函数以供外界调用
 
         func chooseStepFunction(backward: Bool) -> (Int) -> Int {  
             func stepForward(input: Int) -> Int { return input + 1 }  
@@ -216,8 +221,27 @@
 } 
 ```
 
+* 闭包参数不能设定默认值
+
+* 尾随闭包，调用时省略参数
+```
+func someFunctionThatTakeAClosure:(closure: () -> Void) {
+
+}
+
+不使用尾随闭包调用
+someFunctionThatTakeAClosure(closure: {
+    //闭包主体部分
+})
+使用尾随闭包调用
+someFunctionThatTakeAClosure() {
+    //闭包主体部分
+}
+```
+* 值捕获，指闭包内部可以捕获外部函数变量或者常量。在外部函数调用结束后依然可以使用捕获到的值
+* 逃逸闭包即闭包在函数返回之后才会执行，比如异步操作，函数会立即返回，但是闭包会在异步操作结束后才执行，逃逸闭包作为参数时用`@escaping`标注，闭包内必须显式引用self
 * 闭包和函数是引用类型
-* `autoclosure`关键字自动将参数转换为闭包
+* `autoclosure`关键字自动将参数转换为闭包，自动闭包可以省略闭包外面的大括号，用普通表达式代替显式的闭包
 ```
 var customersInLine = ["Chris","Alex","Ewa","Barry","Daniella"]
 ///不使用@autoclosure
@@ -230,3 +254,74 @@ serve( customer:{ customerInLine.remove(at:0) } )
     ///do something
 }
 serve(customer: customerInLine.remove(at:0))
+```
+## Properties（属性）
+
+*  值类型（枚举和结构体）如果被定位常量，其属性不可被修改，引用类型（类）被定义为常量依然可以修改其属性
+
+* **lazy**关键字声明延迟存储属性，即懒加载，注意，只针对存储属性，延迟存储属性的初始化过程非线程安全，即可能被创建多次
+
+* 计算属性提供一个getter和**可选的**setter，计算属性只能定义为变量
+
+* 只读计算属性即只有getter没有setter,可以去掉get及大括号，形如：
+```
+var volume {
+    return width * height * depth
+}
+```
+* 属性观察器`willSet`和`didSet`,可以为**存储属性**和**继承的存储和计算属性**设置属性观察器，不必为非继承的计算属性设置属性观察器，可以直接使用set方法进行属性观察
+
+* 全局变量和局部变量支持属性相关的一切内容，并且全局变量和常量**都是**延迟加载的，不需要用lazy声明，局部常量和变量**从不**延迟加载
+
+## Methods （方法）
+
+* 类型的每一个实例都有一个隐藏的属性`self`，代表该实例本身,如果在类方法中使用self则代表类本身
+
+* 在值类型的实例方法中修改属性，使用`mutating`，可以在可变方法内部修改实例的值
+
+* 类方法在方法前面加上`static`，如
+```
+static func someTypeMethod {
+
+}
+```
+类方法中可以直接调用本类型的其它类方法和类属性
+
+## 构造过程（init）
+
+* 构造器以`init`命名
+
+* **常量属性只能在父类构造器中设置初始值**
+
+### 
+
+* 如果类或者结构体中的属性都有默认值，将会自动获得一个默认构造器，
+```
+class ShoppingListItem {
+    var name: String?
+    var quantity = 1
+    var purchased = false
+}
+var item = ShoppingListItem()
+```
+注意：Class.init()和Class()为同一种结果，都是调用默认构造器
+
+* 结构体中如果没有提供自定义构造器，将会自动获得一个逐一成员构造器，即使属性没有默认值
+
+* 如果提供了自定义构造器，将无法访问默认构造器和结构体的逐一成员构造器
+
+### 类的继承和构造过程
+
+* 子类重写父类的指定构造器必须用`override`修饰符
+* 由于子类不能直接调用父类的便利构造器，所以子类实现一个和父类一样的便利构造器时不需要用override修饰
+* 如果子类中没有提供自定义指定构造器，将自动继承父类指定构造器，相反的，如果子类提供了自定义指定构造器，将不会继承任何父类构造器
+* 两段式构造过程
+
+    第一阶段，类中的每个存储属性赋一个初始值
+
+    第二阶段，每个类在新实例准备使用之前可以进一步定制它们的存储属性
+* 类构造器规则
+1. 子类在调用父类指定构造器之前必须保证所在类的所有属性初始化完成
+2. 指定构造器在为继承的属性设置新值之前必须调用父类指定构造器
+3. 便利构造器必须在为任意属性设置新值之前调用同一类中的其他构造器
+4. 构造器在第一阶段完成之前，不能调用任何实例方法，不能读取任何实例属性的值，不能引用`self`作为一个值
