@@ -1,14 +1,13 @@
 # swift基础语法理解
-
 ## 基础知识
 
 * 可选项绑定
 
     用来判断一个可选项是否有值，如果可选项有值就将其赋值给一个常量或者变量
+i
+* 隐式展开可选项
 
-* 隐式展开可选项
-
-    明确知道可选项是否有值（根据代码逻辑确认一定有值，声明的时候并不知道是否有值），可以默认该可选项有值，
+    明确知道可选项是否有值（根据代码逻辑确认一定有值，声明的时候并不知道是否有值），可以默认该可选项有值，
 
 ## 基础运算符
 
@@ -163,7 +162,7 @@
 
 * In-Out参数
 
-   方法的参数默认为常量不能修改， In-Out参数为指针参数，可以在方法内修改参数值，在外部同样生效,调用时需要在In-Out参数名前加上`&`
+   方法的参数默认为常量不能修改， In-Out参数为指针参数，可以在方法内修改参数值，在外部同样生效,调用时需要在In-Out参数名前加上`&`
 
 **可变参数不能被标记为In-Out参数，In-Out参数不能有默认值**
 
@@ -277,7 +276,8 @@ var volume {
 
 * 类型的每一个实例都有一个隐藏的属性`self`，代表该实例本身,如果在类方法中使用self则代表类本身
 
-* 在值类型的实例方法中修改属性，使用`mutating`，可以在可变方法内部修改实例的值
+* 在值类型的实例方法中修改属性，使用`mutating`，可以在可变方法内部修改实例的值，
+* 给隐藏的self属性赋予一个全新的实例也需要使用`mutating`
 
 * 类方法在方法前面加上`static`，如
 ```
@@ -325,3 +325,57 @@ var item = ShoppingListItem()
 2. 指定构造器在为继承的属性设置新值之前必须调用父类指定构造器
 3. 便利构造器必须在为任意属性设置新值之前调用同一类中的其他构造器
 4. 构造器在第一阶段完成之前，不能调用任何实例方法，不能读取任何实例属性的值，不能引用`self`作为一个值
+### 协议
+* 如果在协议中定义了一个实例方法，该方法会改变遵循该协议的类型的实例，那么在定义协议时需要在方法前加上`mutating`，这样使得结构体和枚举能够遵循该协议并满足方法要求。
+>实现协议方法时，如果是类类型，则不需要写`mutating`关键字。如果是值类型则需要写`mutating`关键字
+* 协议扩展：指为协议提供一个通用实现，遵循该协议的所有类都会自动获得该实现
+* 遵循协议的类如果自己实现了协议，会覆盖协议扩展的实现
+* 可以使用`where`关键字为协议扩展指定限制条件，例如
+```
+extension Collection where Element: Equatable {
+
+}
+```
+>注意：如果一个遵循的类型满足了为同一方法或属性提供实现的多个限制型扩展的要求，swift使用这个实现方法去匹配那个最特殊的限制
+### 泛型
+* 扩展泛型类型
+```
+struct Stack<Element> {
+
+}
+///不需要在扩展定义中提供类型参数列表
+extension Stack {
+    var topItem: Element?
+}
+```
+* 类型约束语法
+```
+func somFunction<T: SomeClass, U: SomeProtocol>(someT: T, someU: U) {
+    /// 这里是范型函数的函数体部分
+}
+```
+* 关联类型，定义协议的时候有可能需要一个或者多个关联类型，定义关联类型的关键字为`associatedtype`
+```
+protocol Container {
+    associatedtype Item
+    func mutating append(_ item: Item)
+    subscript(i: Int) -> Item { get }
+}
+```
+ Container协议声明了遵循该协议的类，结构体或者枚举必须具备的三个条件
+* 可以给关联类型添加约束
+```
+protocol Container {
+    associatedtype Item: Equatable
+    mutating func append(_ item: Item)
+    subscript(i: Int) -> Item { get }
+}
+```
+* 在协议的关联类型约束中使用自身，即协议中的关联类型的约束包括遵循自身
+```
+protocol Suffixable: Container {
+    ///Suffixable协议中的关联类型Suffix遵循Suffixable并且Suffix中的关联类型Item和Suffixable协议中的Item相同
+    associatedtype Suffix: Suffixable where Suffix.Item == Item
+    func suffix(_ size: Int) -> Suffix
+}
+

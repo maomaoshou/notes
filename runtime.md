@@ -1,7 +1,29 @@
 # Runtime
+## **基本概念**
 
+1. SEL作为IMP的key值存放在NSSet中，通过hash快速查询方法就可以根据SEL找到IMP的具体实现函数。同一个类中不能有两个相同方法，就算参数类型不同也不可以。不同类可以有相同方法。SEL本质是一个NSString。
+
+1. Cache用来缓存经常调用的方法，当调用方法时，优先在Cache中查找，如果没有找到，再在method list中查找
+
+1. IMP是一个指向函数实现的函数指针
+
+1. @selector选择只与SEL有关
+
+1. 实例对象，父类，元类三者关系图
+
+![](/Users/maomaoshou/Documents/notes/assets/metaClass.png)
 ## **源码**
 
+1. NSObject的定义
+```
+typedef struct objc_class *Class;
+
+@interface NSObject <NSObject> {
+  Class isa OBJC_ISA_AVAILABILITY
+}
+```
+1. objc_class的定义
+```
     struct objc_class {
     Class _Nonnull isa  OBJC_ISA_AVAILABILITY;
 
@@ -18,24 +40,78 @@
     #endif
 
     } OBJC2_UNAVAILABLE;
+```
+1. objc_class的定义
+```
+struct objc_object {
+  private:
+       isa_t isa
+}
 
+struct objc_class : objc_object {
+  // Class ISA;
+  Class superclass;
+  cache_t cache;
+  class_data_bits_t bits;
+}
+
+union isa_t
+{
+  isa_t() {}
+  isa_t(uintptr_t value) : bits(value) { }
+  Class cls;
+  uintptr_t bits;
+
+  Class cls;
+  uintptr_t bits;
+
+
+  # if __arm64__
+#   define ISA_MASK        0x0000000ffffffff8ULL
+#   define ISA_MAGIC_MASK  0x000003f000000001ULL
+#   define ISA_MAGIC_VALUE 0x000001a000000001ULL
+    struct {
+        uintptr_t indexed           : 1;
+        uintptr_t has_assoc         : 1;
+        uintptr_t has_cxx_dtor      : 1;
+        uintptr_t shiftcls          : 33; // MACH_VM_MAX_ADDRESS 0x1000000000
+        uintptr_t magic             : 6;
+        uintptr_t weakly_referenced : 1;
+        uintptr_t deallocating      : 1;
+        uintptr_t has_sidetable_rc  : 1;
+        uintptr_t extra_rc          : 19;
+#       define RC_ONE   (1ULL<<45)
+#       define RC_HALF  (1ULL<<18)
+    };
+
+# elif __x86_64__
+#   define ISA_MASK        0x00007ffffffffff8ULL
+#   define ISA_MAGIC_MASK  0x001f800000000001ULL
+#   define ISA_MAGIC_VALUE 0x001d800000000001ULL
+    struct {
+        uintptr_t indexed           : 1;
+        uintptr_t has_assoc         : 1;
+        uintptr_t has_cxx_dtor      : 1;
+        uintptr_t shiftcls          : 44; // MACH_VM_MAX_ADDRESS 0x7fffffe00000
+        uintptr_t magic             : 6;
+        uintptr_t weakly_referenced : 1;
+        uintptr_t deallocating      : 1;
+        uintptr_t has_sidetable_rc  : 1;
+        uintptr_t extra_rc          : 8;
+#       define RC_ONE   (1ULL<<56)
+#       define RC_HALF  (1ULL<<7)
+    };
+}
+```
 > 所有OC类和对象在runtime层都是用struct表示的
 
-## **基本概念**
+> 类结构体中包括父类指针superclass，isa(isa_t,因为objc_class继承自objc_object,所以也会有isa)，实例方法结构体class_data_bits_t
 
-1. SEL作为IMP的key值存放在NSSet中，通过hash快速查询方法就可以根据SEL找到IMP的具体实现函数。同一个类中不能有两个相同方法，就算参数类型不同也不可以。不同类可以有相同方法。SEL本质是一个NSString。
+> 关于isa_t，可以通过[isa解析](https://github.com/draveness/analyze/blob/master/contents/objc/%E4%BB%8E%20NSObject%20%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BA%86%E8%A7%A3%20isa.md)了解
 
-1. IMP是一个指向函数实现的函数指针
-
-1. @selector选择只与SEL有关
-
-## **isa和Class**
-
-* 实例对象，父类，元类三者关系图
-
-![](/Users/maomaoshou/Documents/notes/assets/metaClass.png)
-
-* **super**仅仅作为一个编译标志符，告诉编译器去调用父类的方法。如果要获取到父类，使用 **[self superclass]**
+> 关于class_data_bits_t,可以通过[ObjC中方法的结构](https://github.com/draveness/analyze/blob/master/contents/objc/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90%20ObjC%20%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E7%BB%93%E6%9E%84.md#%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-objc-%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E7%BB%93%E6%9E%84)
+## **关于Class和isa的应用**
+* **super**仅仅作为一个编译标志符，告诉编译器去调用父类的方法,但是最后的调用者是self本身，而不是super class。如果要获取到父类，使用`[self superclass]`,
 
 * [A isKindOfClass:B]执行过程：
 
@@ -43,9 +119,65 @@
 
 * [A isMemberOfClass:B]执行过程：
 
-  取**A**的`meta class`和**B**比较。
+  取**A**的`meta cla ss`和**B**比较。
+## **消息发送**
 
-## **Category**
+消息发送分为两个阶段
+
+> Messaging阶段————objc_msgSend
+
+该方法主要进行了四项操作
+
+1. 检测对应的Selector()是不是需要忽略
+
+1. 检查对应的target是否为nil。如果为nil则检查是否有target为nil的处理方法，有则执行，没有则清理现场返回
+
+1. 如果target不为nil，则在该class的缓存中查找方法对应的IMP实现，有则将该方法加入方法缓存列表然后执行该方法，没有则沿着继承链在父类方法列表里寻找，一直找到NSObject为止(oc中NSObject为除NSProxy外所有类的父类),若依然没找到方法，则会尝试`_class_resolveMethod`方法，如果该方法有实现，则继续开始方法寻找过程，若该方法没有实现，则执行消息转发阶段
+
+> 消息转发————Message Forwarding
+
+该阶段可以进行方法调用对象的替换，通过实现协议更改方法的实现，大致步骤有：
+1. 调用`forwardingTargetForSelector`方法选择备援消息接收者
+1. runtime向对象发送`methodSignatureForSelector`消息，取得返回的方法签名用于生成`NSInvocation`对象，
+1. 开发者可以重写`forwardInvocation`来实现自己的转发逻辑
+## **runtime应用及注意事项**
+
+### 应用
+
+1. 实现多继承
+
+1. Method Swizzling
+
+1. Aspect Oriented Programming
+
+1. isa Swizzling
+
+1. Associated Objected管理对象
+
+1. 动态增加方法
+
+1. NSCoding的自动归档与解档
+
+1. 字典和模型互相转换
+
+* 利用消息转发实现“多继承”
+
+### 注意事项
+
+* 多继承
+
+NSObject中的自省方法不会响应通过消息转发实现的多继承，如果需要响应，需自己重写`respondToSelector`方法
+
+* Method Swizzling
+
+**Method Swizzling模版**
+  ![](/Users/maomaoshou/Documents/notes/assets/l.png)
+  注意：
+  1. ![](/Users/maomaoshou/Documents/notes/assets/load&initialize.png)
+   initialize方法有可能不会被调用，所以需要在load方法中进行method swizzling相关操作
+   1. dispath_once,应该保证method swizzling方法只被调用一次
+   1. `Selectors`,`Methods`and`Implementations`。三者之间的关系可以概括为：a class(`Class`)maintains a dispath table to resolve message sent at runtime;each entry in the table is a method(`Method`),which keys a particular name,the selector(`SEL`),to an implementation(`IMP`),which is a pointer to an underlying C function
+  ## **Category**
 
 * Category作用
 
@@ -153,57 +285,3 @@
           };
 
   >associationsManager里面是由一个静态的AssociationsHashMap来存储所有的关联对象，map的key值是关联对象的指针地址，value则是另外一个AssociationsHashMap,，里面保存了关联对象的key-value对。关联对象的销毁逻辑则是判断一个对象是否有关联对象，如果有，则销毁
-## **消息转发**
-
-消息转发分为两个阶段
-
-> objc_msgSend
-
-该方法主要进行了四项操作
-
-1. 检测对应的Selector()是不是需要忽略
-
-1. 检查对应的target是否为nil。如果为nil则检查是否有target为nil的处理方法，有则执行，没有则清理现场返回
-
-1. 如果target不为nil，则在该class的缓存中查找方法对应的IMP实现，有则执行，没有则在方法列表里寻找，一直找到NSObject为止。若没找到，则执行第二阶段
-
-> 消息转发
-
-该阶段可以进行方法调用对象的替换，通过实现协议更改方法的实现
-
-* category实现：将category中的实例方法，协议以及属性添加到类上，将category的类方法，协议添加到类的`meta classs`上。调用一个category方法时，首先在类的方法列表中寻找方法的实现，若没有则在类的meta  class方法列表中寻找，再没有便在meta class的super class方法列表中寻找,直到找到NSObject的方法列表为止
-
-## **runtime应用及注意事项**
-
-### 应用
-
-1. 实现多继承
-
-1. Method Swizzling
-
-1. Aspect Oriented Programming
-
-1. isa Swizzling
-
-1. Associated Objected管理对象
-
-1. 动态增加方法
-
-1. NSCoding的自动归档与解档
-
-1. 字典和模型互相转换
-
-* 利用消息转发实现“多继承”
-
-### 注意事项
-
-* 多继承
-
-NSObject中的自省方法不会响应通过消息转发实现的多继承
-
-* Method Swizzling
-
-Method Swizzling应该在 +load方法中执行，Method Swizzling应该在dispath once中执行，Method Swizzling执行时不应该调用`[super load]`方法
-
-**Method Swizzling模版**
-  ![](/Users/maomaoshou/Documents/notes/assets/l.png)
