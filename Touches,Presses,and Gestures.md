@@ -1,4 +1,6 @@
 # Touches,Presses,and Gestures
+## hitTest:withEvent
+该方法沿着view层级对subview调用`pointInside:withEvent`方法寻找响应event的最佳对象，如果subview的该方法返回yes,则在subview的view层级做相同的操作，如果一个view不包含point,则该view所在的分支会被忽略。该方法会忽略hidden为yes,alpha小于0.01以及禁止用户交互的view
 ## Handling UIKit Gestures（使用手势处理用户事件）
 * gesture recognizers处理点击事件和用户连续触摸事件
 * 手势有两种：连续和单次，单次手势只会在达到触发条件时调用一次action,而连续手势则会在手势相关的event改变时就通知你

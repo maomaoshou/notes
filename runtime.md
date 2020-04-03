@@ -1,19 +1,13 @@
-# Runtime
-## **基本概念**
+# Runtime 
 
+## 基本概念
 1. SEL作为IMP的key值存放在NSSet中，通过hash快速查询方法就可以根据SEL找到IMP的具体实现函数。同一个类中不能有两个相同方法，就算参数类型不同也不可以。不同类可以有相同方法。SEL本质是一个NSString。
-
 1. Cache用来缓存经常调用的方法，当调用方法时，优先在Cache中查找，如果没有找到，再在method list中查找
-
 1. IMP是一个指向函数实现的函数指针
-
 1. @selector选择只与SEL有关
-
 1. 实例对象，父类，元类三者关系图
-
 ![](/Users/maomaoshou/Documents/notes/assets/metaClass.png)
-## **源码**
-
+## 源码
 1. NSObject的定义
 ```
 typedef struct objc_class *Class;
@@ -110,7 +104,9 @@ union isa_t
 > 关于isa_t，可以通过[isa解析](https://github.com/draveness/analyze/blob/master/contents/objc/%E4%BB%8E%20NSObject%20%E7%9A%84%E5%88%9D%E5%A7%8B%E5%8C%96%E4%BA%86%E8%A7%A3%20isa.md)了解
 
 > 关于class_data_bits_t,可以通过[ObjC中方法的结构](https://github.com/draveness/analyze/blob/master/contents/objc/%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90%20ObjC%20%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E7%BB%93%E6%9E%84.md#%E6%B7%B1%E5%85%A5%E8%A7%A3%E6%9E%90-objc-%E4%B8%AD%E6%96%B9%E6%B3%95%E7%9A%84%E7%BB%93%E6%9E%84)
-## **关于Class和isa的应用**
+## 应用
+
+### Class及isa指针
 * **super**仅仅作为一个编译标志符，告诉编译器去调用父类的方法,但是最后的调用者是self本身，而不是super class。如果要获取到父类，使用`[self superclass]`,
 
 * [A isKindOfClass:B]执行过程：
@@ -120,7 +116,9 @@ union isa_t
 * [A isMemberOfClass:B]执行过程：
 
   取**A**的`meta cla ss`和**B**比较。
-## **消息发送**
+
+* kvo实现原理，将被观察者的`isa`指针指向一个新类，该类继承了被观察者并且重写了被观察者的属性的set方法
+### 消息发送
 
 消息发送分为两个阶段
 
@@ -132,7 +130,7 @@ union isa_t
 
 1. 检查对应的target是否为nil。如果为nil则检查是否有target为nil的处理方法，有则执行，没有则清理现场返回
 
-1. 如果target不为nil，则在该class的缓存中查找方法对应的IMP实现，有则将该方法加入方法缓存列表然后执行该方法，没有则沿着继承链在父类方法列表里寻找，一直找到NSObject为止(oc中NSObject为除NSProxy外所有类的父类),若依然没找到方法，则会尝试`_class_resolveMethod`方法，如果该方法有实现，则继续开始方法寻找过程，若该方法没有实现，则执行消息转发阶段
+1. 如果target不为nil，则在该class的缓存中查找方法对应的IMP实现，有则将该方法加入方法缓存列表然后执行该方法，没有则沿着继承链在父类方法列表里寻找，一直找到NSObject为止(oc中NSObject为除NSProxy外所有类的父类),若依然没找到方法，则会尝试`_class_resolveMethod(类或者实例)`方法，如果该方法有实现，则继续开始方法寻找过程，若该方法没有实现，则执行消息转发阶段
 
 > 消息转发————Message Forwarding
 
@@ -142,9 +140,7 @@ union isa_t
 1. 开发者可以重写`forwardInvocation`来实现自己的转发逻辑
 ## **runtime应用及注意事项**
 
-### 应用
-
-1. 实现多继承
+### 综合应用
 
 1. Method Swizzling
 
@@ -160,9 +156,9 @@ union isa_t
 
 1. 字典和模型互相转换
 
-* 利用消息转发实现“多继承”
+1. 利用消息转发实现“多继承”
 
-### 注意事项
+## 注意事项
 
 * 多继承
 
@@ -177,9 +173,12 @@ NSObject中的自省方法不会响应通过消息转发实现的多继承，如
    initialize方法有可能不会被调用，所以需要在load方法中进行method swizzling相关操作
    1. dispath_once,应该保证method swizzling方法只被调用一次
    1. `Selectors`,`Methods`and`Implementations`。三者之间的关系可以概括为：a class(`Class`)maintains a dispath table to resolve message sent at runtime;each entry in the table is a method(`Method`),which keys a particular name,the selector(`SEL`),to an implementation(`IMP`),which is a pointer to an underlying C function
-  ## **Category**
+   1. didAddMethod参数存在的意义:`class_getInstanceMethod`方法会沿着继承链寻找方法实现，如果子类没有实现方法，得到的是父类的实现，此时直接调用`class_exchageImplementations`方法后经过swizzle的方法去调用原方法会引发unrecognizer崩溃。例如
 
-* Category作用
+   ![](/Users/maomaoshou/Documents/notes/assets/swizzle_didaddmethod_example.png)
+  ## Category
+
+### Category作用
 
   1. 为已经存在的类添加方法
 
@@ -201,7 +200,7 @@ NSObject中的自省方法不会响应通过消息转发实现的多继承，如
 
       category在运行期决议，无法添加实例变量；extension在编译器决议,一般用来隐藏类的私有信息。
 
-* Category实质
+### Category实质
 
   1. Category实质是结构体category_t，
 
@@ -222,7 +221,7 @@ NSObject中的自省方法不会响应通过消息转发实现的多继承，如
 
   * 编译器在**DATA段下的**objc_catlist section里保存了一个大小为1的category_t数组（多个category对应多个数组）
 
-* Category加载
+### Category加载
 
   加载过程主要进行的操作
 
@@ -232,11 +231,11 @@ NSObject中的自省方法不会响应通过消息转发实现的多继承，如
 
    >需要注意的是category中的方法名如果和类本身的方法名重复，两个方法都会被加到类上，但是先加的是category中的方法，后加的是类本身的方法，所以会存在“category方法覆盖”（运行时在查找方法时是按照方法列表的顺序查找的）
 
-* Category和load方法
+### Category和load方法
 
     如果在category中实现了load方法，那么category和类本身的load方法都会被调用，调用顺序遵循编译顺序，即先调用Category中的load方法，再调用类本身的load方法
 
-* 利用关联对象为Category添加属性
+### 利用关联对象为Category添加属性
 
   MyClass+Category.h:
     
