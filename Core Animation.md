@@ -2,19 +2,16 @@
 `anchorPoint`是相对于自身坐标系
 `position`是相对于父坐标
 两者是相对于不同坐标系的重合点
-
 * CALayer的`transform`属性用来scale（缩放），rotation（旋转），transform（移动）view的位置
-
 * UIView和CALayer最大的不同在于CALayer不响应用户交互
-
-* 使用UIView和CALayer原因在于职责分离
-
+* 使用UIView和CALayer原因在于职责分离，把布局，绘图，动画这些可以在iOS和Mac平台共用的逻辑分离出来以便可以共享代码
+* 共存在四个层级关系：视图树，图层树，呈现树以及渲染树
 * UIView无法处理的事情
-1. 阴影，圆角，带圆角的边框
-2. 3D变换
-3. 非矩形范围
-4. 透明遮罩
-5. 多级非线形动画
+  * 阴影，圆角，带圆角的边框		
+  * 3D变换
+  * 非矩形范围
+  * 透明遮罩
+  * 多级非线形动画
 
 * CALayer的content相关
 

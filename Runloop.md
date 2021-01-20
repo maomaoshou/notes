@@ -1,13 +1,30 @@
-# Run Loop
+[TOC]
+
+# RunLoop
 
 ## 基础知识
 
-* 每个thread对应一个runloop object
-* runloop接受两种不同的sources
-  ![](/Users/maomaoshou/Documents/notes/assets/runloop.jpg)
+### CFRunLoop
 
-1. Input sources,asynchronous,通常来自其他thread或者application,发生在特定的time或者周期（循环），有`Port-based`和Custom两种。`Port-based`一般处理系统内核信息，run loop不关注到底是这两种中的哪一种，两者唯一的区别在于消息是如何被发送的，`Port-based`自动从内核读取，Custom从其他线程读取
-1. Timer sources,synchonous,
+* CFRunLoop对象检测输入源同时对准备好的control进行调度。常见的输入源有用户输入，网络连接或者周期性及延迟性事件，以及异步回调
+
+* 三种类型的对象可以被检测到：`CFRunLoopSource`，`CFRunLoopTimer`和`CFRunLoopObserver`
+
+* 每个thread对应一个runloop object
+
+* runloop接受两种不同的sources，两种输入源都使用特殊的应用机制获取即将到来的事件
+
+  1. input sources
+
+     发送异步事件，通常来自其他thread或者application，有`Port-based`和Custom两种。`Port-based`一般处理系统内核信息，run loop不关注到底是这两种中的哪一种，两者唯一的区别在于消息是如何被发送的，`Port-based`由内核自动发送，Custom由其他线程手动发送。input sources发送异步事件到相应的处理者同时导致`runUntilDate:`方法退出。
+
+  1. timer sources,
+
+     发送同步事件，发生在未来特定的时间或者周期。是一种线程唤醒自己的方式。timer sources发送事件到它们的常规处理者，但不会导致run loop退出
+
+     
+
+     ​	![](/Users/maomaoshou/Documents/notes/assets/runloop.jpg)
 
 * runloop大致描述
 
@@ -56,12 +73,14 @@ kCFRunLoopAllActivities (1UL << 0x0FFFFFFFU)
 
 ## 关键流程
 
-![ ](/Users/maomaoshou/Documents/notes/assets/runloop-process.png)
+![runloop_flow](/Users/maomaoshou/Documents/notes/assets/runloop_flow.png)
+
+![](/Users/maomaoshou/Documents/notes/assets/runloop-process.png)
 
 细节解释
 
 1. 红色代表五种performTasks,蓝色表示6种callout_to_observer
-2. Poll?，如果执行了source0任务，poll的值为true,如果poll值为true,则不会DoObserversBeforeWaiting和DoObserversAfterWaiting,即runloop会直接进入休眠
+2. Poll?，如果执w行了source0任务，poll的值为true,如果poll值为true,则不会DoObserversBeforeWaiting和DoObserversAfterWaiting,即runloop会直接进入休眠
 3. mach_msg,一次loop里有两次调用mach_msg,没有标记出来的发生在DoSource0之后，会主动读取和mainQueue相关的队列，但是这个mach_msg调用不会进入休眠，因为timeout值传入的是0，如果读取到了消息，就直接goto到DoMainQueue的代码
 4. PortType，每次runloop被唤醒之后会根据port type决定到底执行哪一类任务
 

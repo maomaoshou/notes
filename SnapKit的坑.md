@@ -1,1 +1,0 @@
-* 想修改multiplier，不能使用update，要使用remake

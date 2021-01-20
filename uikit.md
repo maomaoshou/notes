@@ -1,4 +1,10 @@
-#### UIButton
+## UIButton
+
+* titleEdgeInsets和imageEdgeInset设置规则
+
+* top和right，left和right必须一正一负对应设置
+* image移到右边，移动距离为title的width（alignment均为center的时候）
+* image移到上边，纵向移动距离为title的height，横向移动距离为title的宽度/2（alignment均为center的时候）
 
 * UIButton对title和image的布局规则：
 
@@ -21,7 +27,11 @@ if \(button.width &gt;＝ imageView.width + label.width\){图像和文字都居�
 
     * imageEdgeInset top,left,bottom,right四个方向的值都可以改变，正值靠近中心，负值向外拉伸
 
-### UIView
+## UITableView
+
+* rowHeight,如果所有Cell高度都一样且有固定值，建议使用`rowHeight`属性设置，减少不必要的高度计算和代理方法调用
+
+## UIView
 
 UIView的frame与bounds和center的关系：
 
