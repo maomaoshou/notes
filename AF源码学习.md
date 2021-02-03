@@ -51,7 +51,15 @@
 
 ## AFHTTPSessionManager
 
-该类继承自AFURLSessionManager，主要针对HTTP请求进行封装
+该类继承自AFURLSessionManager，主要针对HTTP请求进行封装。支持发起GET，POST，HEAD，DELETE，PUT等HTTP请求，
+
+## AFHTTPResponseSerialization
+
+该类对发起请求相关信息进行了封装，包含拼接请求头和请求体，URL编码，表单提交，请求流等
+
+## AFHTTPRequestSerialization
+
+该类对网络请求返回的数据进行了验证及反序列化，支持JSON，XML，PropertyList，Image等
 
 ## AFNetworkReachabilityManager
 
